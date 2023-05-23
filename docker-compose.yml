@@ -5,16 +5,17 @@ services:
       TZ: Asia/Shanghai
       MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
       MYSQL_ROOT_HOST: '%'
-      MYSQL_ROOT_PASSWORD: "root123_A"
+      MYSQL_ROOT_PASSWORD: "root123456"
+      platform: linux/amd64
     restart: always
     container_name: austin-mysql
-    image: mysql:5.7
+    image: mysql:8.0.28
     hostname: mysql
     command: --init-file /docker-entrypoint-initdb.d/init.sql
     volumes:
       - ./sql/austin.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
-      - "3306:3306"
+      - "3307:3306"
     networks:
       - app
   austin-redis:
