@@ -10,9 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * groupId 标识着每一个消费者组
+ *  groupId 标识着每一个消费者组 ,每一个消息类型对应一个group
  *
  * @author 3y
+ *
  */
 public class GroupIdMappingUtils {
 
