@@ -42,7 +42,7 @@ public class ShieldServiceImpl implements ShieldService {
 
         /**
          * example:当消息下发至austin平台时，已经是凌晨1点，业务希望此类消息在次日的早上9点推送
-         * (配合 分布式任务定时任务框架搞掂)
+         * (配合 分布式任务定时任务框架搞定)
          */
         if (isNight()) {
             if (ShieldType.NIGHT_SHIELD.getCode().equals(taskInfo.getShieldType())) {
@@ -50,6 +50,7 @@ public class ShieldServiceImpl implements ShieldService {
                         .businessId(taskInfo.getBusinessId()).ids(taskInfo.getReceiver()).build());
             }
             if (ShieldType.NIGHT_SHIELD_BUT_NEXT_DAY_SEND.getCode().equals(taskInfo.getShieldType())) {
+                //SerializerFeature.WriteClassName是toJSONString设置的一个属性值，设置之后在序列化的时候会多写入一个@type，即写上被序列化的类名，type可以指定反序列化的类，并且调用其getter/setter/is方法。
                 redisUtils.lPush(NIGHT_SHIELD_BUT_NEXT_DAY_SEND_KEY, JSON.toJSONString(taskInfo,
                                 SerializerFeature.WriteClassName),
                         SECONDS_OF_A_DAY);

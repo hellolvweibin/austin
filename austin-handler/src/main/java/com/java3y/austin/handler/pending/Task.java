@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 /**
  * Task 执行器
  * 0.丢弃消息
- * 2.屏蔽消息
+ * 1.屏蔽消息
  * 2.通用去重功能
  * 3.发送消息
  *

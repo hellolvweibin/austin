@@ -58,7 +58,7 @@ public class SmsHandler extends BaseHandler implements Handler {
     /**
      * 流量自动分配策略
      */
-    private static final Integer AUTO_FLOW_RULE = 0;
+    private static final Integer AUTO_FLOW_RULE = (Integer) 0;
 
     private static final String FLOW_KEY = "msgTypeSmsConfig";
     private static final String FLOW_KEY_PREFIX = "message_type_";
@@ -76,7 +76,6 @@ public class SmsHandler extends BaseHandler implements Handler {
              * 2、发送短信
              */
             MessageTypeSmsConfig[] messageTypeSmsConfigs = loadBalance(getMessageTypeSmsConfig(taskInfo));
-            //这里的for循环执行如下几个步骤：1.根据消息类型获取流量配置 2.流量负载均衡（优先级高的在数组最前面） 3.路由到某个短信厂商进行下发：1）有返回值，说明下发正常；2）没有返回值，换一个厂商渠道继续下发
             for (MessageTypeSmsConfig messageTypeSmsConfig : messageTypeSmsConfigs) {
                 smsParam.setScriptName(messageTypeSmsConfig.getScriptName());
                 smsParam.setSendAccountId(messageTypeSmsConfig.getSendAccount());
@@ -150,7 +149,7 @@ public class SmsHandler extends BaseHandler implements Handler {
          */
         if (!taskInfo.getSendAccount().equals(AUTO_FLOW_RULE)) {
             SmsAccount account = accountUtils.getAccountById(taskInfo.getSendAccount(), SmsAccount.class);
-            return Arrays.asList(MessageTypeSmsConfig.builder().sendAccount(taskInfo.getSendAccount()).scriptName(account.getScriptName()).weights(100).build());
+            return Arrays.asList(MessageTypeSmsConfig.builder().sendAccount(taskInfo.getSendAccount()).scriptName(account.getScriptName()).weights(Integer.valueOf(100)).build());
         }
 
         /**

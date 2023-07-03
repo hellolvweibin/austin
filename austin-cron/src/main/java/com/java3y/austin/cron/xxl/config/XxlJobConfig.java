@@ -33,6 +33,7 @@ public class XxlJobConfig {
 
     @Bean
     public XxlJobSpringExecutor xxlJobExecutor() {
+        log.info(">>>>>>>>>>> xxl-job config init.");
         // 创建 XxlJobSpringExecutor 执行器
         XxlJobSpringExecutor xxlJobSpringExecutor = new XxlJobSpringExecutor();
         xxlJobSpringExecutor.setAdminAddresses(adminAddresses);

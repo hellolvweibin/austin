@@ -59,7 +59,9 @@ public enum AnchorState implements PowerfulEnum {
     CLICK(64, "消息被点击"),
     ;
 
-
+    /**
+     * 枚举参数信息
+     */
     private final Integer code;
     private final String description;
 }
