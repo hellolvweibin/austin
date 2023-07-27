@@ -45,6 +45,7 @@ public class PipelineConfig {
     @Bean("commonSendTemplate")
     public ProcessTemplate commonSendTemplate() {
         ProcessTemplate processTemplate = new ProcessTemplate();
+        //构造责任链
         processTemplate.setProcessList(Arrays.asList(preParamCheckAction, assembleAction,
                 afterParamCheckAction, sendMqAction));
         return processTemplate;

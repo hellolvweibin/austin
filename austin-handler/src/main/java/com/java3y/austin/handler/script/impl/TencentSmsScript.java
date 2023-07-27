@@ -46,6 +46,7 @@ public class TencentSmsScript implements SmsScript {
     @Override
     public List<SmsRecord> send(SmsParam smsParam) {
         try {
+            //通过账号工具类中通过Id找是否由该账号，否则通过脚本名称找渠道账号
             TencentSmsAccount tencentSmsAccount = Objects.nonNull(smsParam.getSendAccountId()) ? accountUtils.getAccountById(smsParam.getSendAccountId(), TencentSmsAccount.class)
                     : accountUtils.getSmsAccountByScriptName(smsParam.getScriptName(), TencentSmsAccount.class);
             SmsClient client = init(tencentSmsAccount);
@@ -88,10 +89,11 @@ public class TencentSmsScript implements SmsScript {
         List<SmsRecord> smsRecordList = new ArrayList<>();
         for (SendStatus sendStatus : response.getSendStatusSet()) {
 
-            // 腾讯返回的电话号有前缀，这里取巧直接翻转获取手机号
+            // 腾讯返回的电话号有前缀，这里取巧直接翻转获取手机号,+8613711112222， 其中前面有一个+号 ，86为国家码，13711112222为手机号,为了拿后11位，先反转拿到对应长度，再反转回来
             String phone = new StringBuilder(new StringBuilder(sendStatus.getPhoneNumber())
                     .reverse().substring(0, PHONE_NUM)).reverse().toString();
 
+            //建造者模式拼接短信记录
             SmsRecord smsRecord = SmsRecord.builder()
                     .sendDate(Integer.valueOf(DateUtil.format(new Date(), DatePattern.PURE_DATE_PATTERN)))
                     .messageTemplateId(smsParam.getMessageTemplateId())
@@ -99,7 +101,9 @@ public class TencentSmsScript implements SmsScript {
                     .supplierId(tencentSmsAccount.getSupplierId())
                     .supplierName(tencentSmsAccount.getSupplierName())
                     .msgContent(smsParam.getContent())
+                    //发送流水号
                     .seriesId(sendStatus.getSerialNo())
+                    //计费条数
                     .chargingNum(Math.toIntExact(sendStatus.getFee()))
                     .status(SmsStatus.SEND_SUCCESS.getCode())
                     .reportContent(sendStatus.getCode())

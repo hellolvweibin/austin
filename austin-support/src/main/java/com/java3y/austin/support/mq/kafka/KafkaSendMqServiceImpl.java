@@ -12,7 +12,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 
+import javax.transaction.Transactional;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
@@ -33,6 +35,10 @@ public class KafkaSendMqServiceImpl implements SendMqService {
     @Value("${austin.business.tagId.key}")
     private String tagIdKey;
 
+    /**
+     * @param topic 是kafka中的分区概念，一个Topic包含多个分区
+     * @param tagId 用来实现消息过滤
+     */
     @Override
     public void send(String topic, String jsonValue, String tagId) {
         if (StrUtil.isNotBlank(tagId)) {

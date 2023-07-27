@@ -8,6 +8,7 @@ import lombok.ToString;
 /**
  * @author 3y
  * @date 2022/1/22
+ * @desrciption 消息模版状态
  */
 @Getter
 @ToString

@@ -27,6 +27,7 @@ public class PreParamCheckAction implements BusinessProcess<SendTaskModel> {
 
     @Override
     public void process(ProcessContext<SendTaskModel> context) {
+        //根据上下文获得发送任务模版
         SendTaskModel sendTaskModel = context.getProcessModel();
 
         Long messageTemplateId = sendTaskModel.getMessageTemplateId();

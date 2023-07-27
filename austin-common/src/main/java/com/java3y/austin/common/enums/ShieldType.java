@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.ToString;
 
 /**
- * 屏蔽类型
+ * @desrciption 屏蔽类型
  *
  * @author 3y
  */

@@ -34,12 +34,21 @@ public class Task implements Runnable {
     @Autowired
     private HandlerHolder handlerHolder;
 
+    /**
+     * 去重功能
+     */
     @Autowired
     private DeduplicationRuleService deduplicationRuleService;
 
+    /**
+     * 丢弃模版消息
+     */
     @Autowired
     private DiscardMessageService discardMessageService;
 
+    /**
+     * 屏蔽服务
+     */
     @Autowired
     private ShieldService shieldService;
 
@@ -62,6 +71,7 @@ public class Task implements Runnable {
         }
 
         // 3. 真正发送消息
+        // 如果接收者不为空，通过获得渠道名称，获得对应的Handler来执行任务
         if (CollUtil.isNotEmpty(taskInfo.getReceiver())) {
             handlerHolder.route(taskInfo.getSendChannel()).doHandler(taskInfo);
         }

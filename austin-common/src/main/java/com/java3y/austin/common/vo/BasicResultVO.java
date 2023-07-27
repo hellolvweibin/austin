@@ -9,6 +9,7 @@ import lombok.ToString;
 /**
  * @author zzb
  * @since 2021.11.17
+ * @desrciption 统一请求响应
  */
 
 @Getter
@@ -32,10 +33,14 @@ public final class BasicResultVO<T> {
      */
     private T data;
 
+    /**
+     * 四个构造方法
+     */
     public BasicResultVO(String status, String msg) {
         this.status = status;
         this.msg = msg;
     }
+
 
     public BasicResultVO(RespStatusEnum status) {
         this(status, null);

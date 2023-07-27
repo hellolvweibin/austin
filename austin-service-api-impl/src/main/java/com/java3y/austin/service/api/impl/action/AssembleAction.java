@@ -44,15 +44,22 @@ public class AssembleAction implements BusinessProcess<SendTaskModel> {
 
     @Override
     public void process(ProcessContext<SendTaskModel> context) {
+        //根据上下文获得发送消息任务模型
         SendTaskModel sendTaskModel = context.getProcessModel();
+        //根据上下文获取模版ID
         Long messageTemplateId = sendTaskModel.getMessageTemplateId();
 
         try {
+            //Optional是Java8增加的API，生成一个容器对象，能够解决空指针异常
+            //如果存在一个值，isPresent()将返回true，而get()将返回该值
+            //messageTemplateDao.findById到数据库找到对应模版
             Optional<MessageTemplate> messageTemplate = messageTemplateDao.findById(messageTemplateId);
+            //如果模版不存在或者模版被删除，抛出异常
             if (!messageTemplate.isPresent() || messageTemplate.get().getIsDeleted().equals(CommonConstant.TRUE)) {
                 context.setNeedBreak(true).setResponse(BasicResultVO.fail(RespStatusEnum.TEMPLATE_NOT_FOUND));
                 return;
             }
+            //判断执行什么操作
             if (BusinessCode.COMMON_SEND.getCode().equals(context.getCode())) {
                 List<TaskInfo> taskInfos = assembleTaskInfo(sendTaskModel, messageTemplate.get());
                 sendTaskModel.setTaskInfo(taskInfos);

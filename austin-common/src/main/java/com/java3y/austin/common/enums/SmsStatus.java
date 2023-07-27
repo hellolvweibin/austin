@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.ToString;
 
 /**
- * 短信状态信息
+ * @desrciption 短信状态信息
  *
  * @author 3y
  */
