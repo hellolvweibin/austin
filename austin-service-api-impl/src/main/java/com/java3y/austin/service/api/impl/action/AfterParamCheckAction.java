@@ -75,13 +75,16 @@ public class AfterParamCheckAction implements BusinessProcess<SendTaskModel> {
         while (iterator.hasNext()) {
             TaskInfo task = iterator.next();
             Set<String> illegalPhone = task.getReceiver().stream()
+                    //ReUtil.isMatch给定内容是否匹配正则
                     .filter(phone -> !ReUtil.isMatch(regexExp, phone))
                     .collect(Collectors.toSet());
 
+            //如果存在非法手机号，全部移除
             if (CollUtil.isNotEmpty(illegalPhone)) {
                 task.getReceiver().removeAll(illegalPhone);
                 log.error("messageTemplateId:{} find illegal receiver!{}", task.getMessageTemplateId(), JSON.toJSONString(illegalPhone));
             }
+            //如果接收者为空，移除迭代器
             if (CollUtil.isEmpty(task.getReceiver())) {
                 iterator.remove();
             }

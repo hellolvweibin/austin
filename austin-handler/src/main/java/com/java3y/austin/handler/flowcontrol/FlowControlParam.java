@@ -36,4 +36,5 @@ public class FlowControlParam {
      * 子类初始化的时候指定
      */
     protected RateLimitStrategy rateLimitStrategy;
+
 }

@@ -44,7 +44,9 @@ public class SendMqAction implements BusinessProcess<SendTaskModel> {
     public void process(ProcessContext<SendTaskModel> context) {
         SendTaskModel sendTaskModel = context.getProcessModel();
         try {
+            //将发送任务封装成Json字符串到MQ中
             if (BusinessCode.COMMON_SEND.getCode().equals(context.getCode())) {
+                //SerializerFeature.WriteClassName序列化时写入类型信息，默认为false。反序列化是需用到
                 String message = JSON.toJSONString(sendTaskModel.getTaskInfo(), new SerializerFeature[]{SerializerFeature.WriteClassName});
                 sendMqService.send(sendMessageTopic, message, tagId);
             } else if (BusinessCode.RECALL.getCode().equals(context.getCode())) {

@@ -15,6 +15,7 @@ import com.java3y.austin.handler.domain.sms.SmsParam;
 import com.java3y.austin.handler.handler.BaseHandler;
 import com.java3y.austin.handler.handler.Handler;
 import com.java3y.austin.handler.script.SmsScript;
+import com.java3y.austin.handler.script.impl.TencentSmsScript;
 import com.java3y.austin.support.dao.SmsRecordDao;
 import com.java3y.austin.support.domain.MessageTemplate;
 import com.java3y.austin.support.domain.SmsRecord;
@@ -46,6 +47,7 @@ public class SmsHandler extends BaseHandler implements Handler {
     @Autowired
     private SmsRecordDao smsRecordDao;
 
+
     @Autowired
     private ConfigService config;
 
@@ -65,6 +67,7 @@ public class SmsHandler extends BaseHandler implements Handler {
 
     @Override
     public boolean handler(TaskInfo taskInfo) {
+        //拼接发送短信参数
         SmsParam smsParam = SmsParam.builder()
                 .phones(taskInfo.getReceiver())
                 .content(getSmsContent(taskInfo))
@@ -75,12 +78,15 @@ public class SmsHandler extends BaseHandler implements Handler {
              * 1、动态配置做流量负载
              * 2、发送短信
              */
+            // 负载均衡后对于每条短信对其相关配置进行发送 ，例： 100条通知类短信，80条走腾讯云，20条走云片云
             MessageTypeSmsConfig[] messageTypeSmsConfigs = loadBalance(getMessageTypeSmsConfig(taskInfo));
             for (MessageTypeSmsConfig messageTypeSmsConfig : messageTypeSmsConfigs) {
                 smsParam.setScriptName(messageTypeSmsConfig.getScriptName());
                 smsParam.setSendAccountId(messageTypeSmsConfig.getSendAccount());
+                //TODO 重点！！这一步执行真正的从消费了一条消息，就是发送了一条数据
                 List<SmsRecord> recordList = applicationContext.getBean(messageTypeSmsConfig.getScriptName(), SmsScript.class).send(smsParam);
                 if (CollUtil.isNotEmpty(recordList)) {
+                    // JPA 提供的保存所有记录实体
                     smsRecordDao.saveAll(recordList);
                     return true;
                 }
@@ -108,7 +114,9 @@ public class SmsHandler extends BaseHandler implements Handler {
         Random random = new Random();
         int index = random.nextInt(total) + 1;
 
+        // 主要提供商
         MessageTypeSmsConfig supplier = null;
+        // 备份提供商
         MessageTypeSmsConfig supplierBack = null;
         for (int i = 0; i < messageTypeSmsConfigs.size(); ++i) {
             if (index <= messageTypeSmsConfigs.get(i).getWeights()) {
@@ -148,7 +156,9 @@ public class SmsHandler extends BaseHandler implements Handler {
          * 如果模板指定了账号，则优先使用具体的账号进行发送
          */
         if (!taskInfo.getSendAccount().equals(AUTO_FLOW_RULE)) {
+
             SmsAccount account = accountUtils.getAccountById(taskInfo.getSendAccount(), SmsAccount.class);
+            //设置权重100%
             return Arrays.asList(MessageTypeSmsConfig.builder().sendAccount(taskInfo.getSendAccount()).scriptName(account.getScriptName()).weights(Integer.valueOf(100)).build());
         }
 

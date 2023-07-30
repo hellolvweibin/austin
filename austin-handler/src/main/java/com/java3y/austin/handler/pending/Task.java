@@ -62,15 +62,15 @@ public class Task implements Runnable {
         if (discardMessageService.isDiscard(taskInfo)) {
             return;
         }
-        // 1. 屏蔽消息
+        // 1. 屏蔽消息 TODO 待啃
         shieldService.shield(taskInfo);
 
-        // 2.平台通用去重
+        // 2.平台通用去重 TODO 待啃
         if (CollUtil.isNotEmpty(taskInfo.getReceiver())) {
             deduplicationRuleService.duplication(taskInfo);
         }
 
-        // 3. 真正发送消息
+        // 3. 真正发送消息 TODO 待啃
         // 如果接收者不为空，通过获得渠道名称，获得对应的Handler来执行任务
         if (CollUtil.isNotEmpty(taskInfo.getReceiver())) {
             handlerHolder.route(taskInfo.getSendChannel()).doHandler(taskInfo);

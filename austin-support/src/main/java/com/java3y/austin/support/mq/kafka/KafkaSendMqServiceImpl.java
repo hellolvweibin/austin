@@ -12,9 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 
-import javax.transaction.Transactional;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
@@ -41,8 +39,10 @@ public class KafkaSendMqServiceImpl implements SendMqService {
      */
     @Override
     public void send(String topic, String jsonValue, String tagId) {
+        //如果需要过滤
         if (StrUtil.isNotBlank(tagId)) {
             List<Header> headers = Arrays.asList(new RecordHeader(tagIdKey, tagId.getBytes(StandardCharsets.UTF_8)));
+            //ProducerRecord(String topic, Integer partition, Long timestamp, K key, V value, Iterable<Header> headers)
             kafkaTemplate.send(new ProducerRecord(topic, null, null, null, jsonValue, headers));
             return;
         }

@@ -95,6 +95,7 @@ public class AssembleAction implements BusinessProcess<SendTaskModel> {
                     .msgType(messageTemplate.getMsgType())
                     .shieldType(messageTemplate.getShieldType())
                     .sendAccount(messageTemplate.getSendAccount())
+                    //获取内容，替换模版中的content占位符
                     .contentModel(getContentModelValue(messageTemplate, messageParam)).build();
 
             taskInfoList.add(taskInfo);
@@ -108,6 +109,7 @@ public class AssembleAction implements BusinessProcess<SendTaskModel> {
     /**
      * 获取 contentModel，替换模板msgContent中占位符信息
      */
+    //TODO 看一下占位符content如何替换的
     private static ContentModel getContentModelValue(MessageTemplate messageTemplate, MessageParam messageParam) {
 
         // 得到真正的ContentModel 类型

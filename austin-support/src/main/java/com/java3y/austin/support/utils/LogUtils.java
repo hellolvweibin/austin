@@ -52,6 +52,7 @@ public class LogUtils extends CustomLogListener {
         log.info(message);
 
         try {
+            // 将埋点信息发送到消息队列中
             sendMqService.send(topicName, message);
         } catch (Exception e) {
             log.error("LogUtils#print send mq fail! e:{},params:{}", Throwables.getStackTraceAsString(e)
